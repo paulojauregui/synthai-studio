@@ -1,0 +1,680 @@
+/* ==========================================================================
+   SynthAI Studio — Component & State Stylesheet (components.css)
+   Contract: docs/DESIGN_SYSTEM.md Section 5.3 / docs/specs/M06_SPEC.md 3.2
+   Requires: tokens.css loaded first. Zero hardcoded hex literals.
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  overflow-x: hidden;
+  max-width: 100vw;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------------------
+   1. Accessibility: Skip Link & Keyboard Focus Visibility (WCAG 2.2 AA)
+   -------------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: -48px;
+  left: var(--space-3);
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  z-index: 1000;
+  transition: top var(--duration-fast) var(--ease-out-expo);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: var(--space-3);
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+.nav-tab:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible,
+[tabindex="0"]:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. Strict Tabular-Nums Discipline (zero telemetry jitter)
+   -------------------------------------------------------------------------- */
+.tabular-nums,
+.stat-val,
+.metric-value,
+td[data-numeric="true"],
+.corr-cell,
+.badge-numeric,
+input[type="number"],
+.log-console {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+/* --------------------------------------------------------------------------
+   3. Top Application Header & Telemetry Bar
+   -------------------------------------------------------------------------- */
+header {
+  background: var(--bg-surface-1);
+  border-bottom: 1px solid var(--border-default);
+  padding: 14px var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.brand-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--accent-primary);
+  letter-spacing: 0.5px;
+}
+
+.brand-subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.cluster-status {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* --------------------------------------------------------------------------
+   4. Step Navigation Bar (ARIA Tablist Compatible)
+   -------------------------------------------------------------------------- */
+nav {
+  background: var(--bg-surface-1);
+  border-bottom: 1px solid var(--border-default);
+  display: flex;
+  overflow-x: auto;
+  padding: 0 var(--space-6);
+  gap: var(--space-1);
+}
+
+#workflow-tablist {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-1);
+  list-style: none;
+}
+
+.nav-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--space-3) 18px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color var(--duration-fast) var(--ease-out-expo),
+              background-color var(--duration-fast) var(--ease-out-expo),
+              border-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.nav-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-2);
+}
+
+.nav-tab.active,
+.nav-tab[aria-selected="true"] {
+  color: var(--accent-primary-hover);
+  border-bottom-color: var(--accent-primary);
+  background: var(--bg-surface-2);
+}
+
+.nav-tab:disabled {
+  color: var(--text-muted);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   5. Workbench Layout & Responsive Grids
+   -------------------------------------------------------------------------- */
+main {
+  padding: var(--space-6);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.step-panel {
+  display: none;
+}
+
+.step-panel.active {
+  display: block;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+/* --------------------------------------------------------------------------
+   6. Surface Cards, Stat Tiles & Semantic Badges
+   -------------------------------------------------------------------------- */
+.card {
+  background: var(--bg-surface-1);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.stat-tile {
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: center;
+  min-height: 84px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-val {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--accent-primary-hover);
+  margin: var(--space-1) 0;
+}
+
+.stat-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.badge {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  line-height: 1.4;
+}
+
+.badge-success {
+  background: var(--status-nominal-bg);
+  color: var(--status-nominal-fg);
+  border: 1px solid var(--status-nominal-border);
+}
+
+.badge-info {
+  background: var(--status-info-bg);
+  color: var(--status-info-fg);
+  border: 1px solid var(--status-info-border);
+}
+
+.badge-warn {
+  background: var(--status-warn-bg);
+  color: var(--status-warn-fg);
+  border: 1px solid var(--status-warn-border);
+}
+
+.badge-danger {
+  background: var(--status-danger-bg);
+  color: var(--status-danger-fg);
+  border: 1px solid var(--status-danger-border);
+}
+
+/* --------------------------------------------------------------------------
+   7. Form Controls & Interactive Buttons
+   -------------------------------------------------------------------------- */
+label {
+  display: block;
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+input, select, textarea {
+  width: 100%;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  margin-bottom: 14px;
+  transition: border-color var(--duration-fast) var(--ease-out-expo);
+}
+
+input:hover, select:hover, textarea:hover {
+  border-color: var(--border-strong);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 1px;
+  border-color: var(--border-focus);
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.form-inline-check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: 14px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.form-inline-check label {
+  display: inline;
+  margin-bottom: 0;
+  text-transform: none;
+}
+
+.form-inline-check input[type="checkbox"],
+.form-inline-check input[type="radio"] {
+  width: auto;
+  margin: 0;
+  accent-color: var(--accent-primary);
+}
+
+button.btn {
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color var(--duration-fast) var(--ease-out-expo),
+              border-color var(--duration-fast) var(--ease-out-expo),
+              opacity var(--duration-fast) var(--ease-out-expo);
+}
+
+button.btn:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+}
+
+button.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.btn-emerald {
+  background: var(--accent-secondary);
+  color: var(--text-on-accent);
+}
+
+button.btn-emerald:hover:not(:disabled) {
+  background: var(--accent-secondary-hover);
+}
+
+button.btn-secondary {
+  background: var(--bg-surface-2);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+}
+
+button.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-surface-3);
+  border-color: var(--border-strong);
+}
+
+/* --------------------------------------------------------------------------
+   8. Data Tables, Correlation Matrix & Console Logs
+   -------------------------------------------------------------------------- */
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+th, td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+th {
+  background: var(--bg-surface-2);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-default);
+  white-space: nowrap;
+}
+
+td[data-numeric="true"],
+th[data-numeric="true"],
+.corr-cell {
+  text-align: right;
+}
+
+tbody tr:hover {
+  background: var(--bg-surface-2);
+}
+
+pre {
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-default);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--status-info-fg);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.log-console {
+  background: var(--bg-console);
+  border: 1px solid var(--border-default);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--status-nominal-fg);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.benchmark-card {
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  min-height: 118px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.benchmark-card:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-surface-3);
+}
+
+.issue-item {
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--status-warn-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.issue-item[data-severity="CRITICAL"] {
+  border-left-color: var(--status-danger-fg);
+}
+
+.issue-item[data-severity="LOW"] {
+  border-left-color: var(--status-nominal-fg);
+}
+
+/* --------------------------------------------------------------------------
+   9. 5-State Determinism: Empty, Loading (CLS=0), Nominal, Degraded, Error
+   -------------------------------------------------------------------------- */
+.state-empty {
+  background: var(--bg-surface-2);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.state-loading {
+  background: var(--bg-surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+@keyframes synthai-shimmer {
+  0% { opacity: 0.45; }
+  50% { opacity: 0.85; }
+  100% { opacity: 0.45; }
+}
+
+.skeleton,
+.skeleton-tile,
+.skeleton-row,
+.skeleton-card {
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  animation: synthai-shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-tile {
+  min-height: 84px;
+}
+
+.skeleton-row {
+  height: 37px;
+  margin-bottom: var(--space-1);
+}
+
+.skeleton-card {
+  min-height: 136px;
+}
+
+.state-nominal {
+  background: var(--bg-surface-1);
+  border: 1px solid var(--status-nominal-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  color: var(--text-primary);
+}
+
+.degraded-banner,
+.state-degraded {
+  background: var(--status-warn-bg);
+  color: var(--status-warn-fg);
+  border: 1px solid var(--status-warn-border);
+  border-left: 4px solid var(--status-warn-fg);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.error-banner,
+.state-error {
+  background: var(--status-danger-bg);
+  color: var(--status-danger-fg);
+  border: 1px solid var(--status-danger-border);
+  border-left: 4px solid var(--status-danger-fg);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* --------------------------------------------------------------------------
+   10. Motion & Reduced-Motion Compliance
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .skeleton,
+  .skeleton-tile,
+  .skeleton-row,
+  .skeleton-card {
+    animation: none !important;
+    opacity: 0.7;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. Responsive Breakpoints (375px Mobile -> 768px Tablet -> 2560px 4K)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1199px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  nav {
+    padding: 0 var(--space-3);
+  }
+
+  main {
+    padding: var(--space-4);
+  }
+
+  .card-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: var(--space-4);
+  }
+}
