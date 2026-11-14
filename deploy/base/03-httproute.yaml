@@ -3,7 +3,7 @@ kind: HTTPRoute
 metadata:
   name: app-route
   labels:
-    app.kubernetes.io/name: mainframe-app-template
+    app.kubernetes.io/name: synthai-studio
 spec:
   parentRefs:
     - group: gateway.networking.k8s.io
@@ -12,7 +12,7 @@ spec:
       namespace: argocd
       sectionName: https-public
   hostnames:
-    - app-template.paulojauregui.com
+    - synthai-studio.paulojauregui.com
   rules:
     - matches:
         - path:

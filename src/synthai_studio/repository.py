@@ -558,16 +558,18 @@ class StudioRepository:
         self,
         dataset_name: str,
         base_url: str = "http://localhost:8000",
+        expiry_seconds: int = 3600,
     ) -> PresignedUploadTicket:
         """Generate a short-lived capability for single-use dataset upload.
 
         Pre-conditions:
             - ``dataset_name`` is a non-empty string.
+            - ``expiry_seconds`` > 0.
         Post-conditions:
-            - Persists ticket in DuckDB with 1-hour expiration window.
+            - Persists ticket in DuckDB with expiry_seconds expiration window.
         """
         token = uuid.uuid4().hex
-        expires_at = datetime.now() + timedelta(hours=1)
+        expires_at = datetime.now() + timedelta(seconds=expiry_seconds)
         upload_url = f"{base_url.rstrip('/')}/api/v1/datasets/upload?token={token}"
         ticket = PresignedUploadTicket(
             upload_token=token,
