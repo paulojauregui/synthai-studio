@@ -8,6 +8,8 @@ Post-conditions:
 """
 
 import io
+import tomllib
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -400,3 +402,37 @@ def test_interactive_web_ui_endpoint(client: TestClient) -> None:
     assert "step-4" in html
     assert "step-5" in html
     assert "DIFFERENTIAL PRIVACY" in html
+
+
+def test_pyproject_packaging_and_py313_target() -> None:
+    """Verify pyproject.toml tooling aligns with Python 3.13 and includes UI static assets.
+
+    Pre-conditions:
+        - pyproject.toml exists in the repository root.
+    Post-conditions:
+        - Asserts target-version == 'py313' under [tool.ruff].
+        - Asserts python_version == '3.13' under [tool.mypy].
+        - Asserts templates/*.html, static/*.css, and static/*.js are in [tool.poetry] include.
+    """
+    pyproject_path = Path(__file__).resolve().parent.parent / "pyproject.toml"
+    assert pyproject_path.is_file(), f"Missing pyproject.toml at {pyproject_path}"
+
+    with open(pyproject_path, "rb") as f:
+        config = tomllib.load(f)
+
+    ruff_target = config.get("tool", {}).get("ruff", {}).get("target-version")
+    assert ruff_target == "py313", f"Expected ruff target-version 'py313', got {ruff_target}"
+
+    mypy_version = config.get("tool", {}).get("mypy", {}).get("python_version")
+    assert mypy_version == "3.13", f"Expected mypy python_version '3.13', got {mypy_version}"
+
+    includes = config.get("tool", {}).get("poetry", {}).get("include", [])
+    expected_assets = [
+        "src/synthai_studio/api/templates/*.html",
+        "src/synthai_studio/api/static/*.css",
+        "src/synthai_studio/api/static/*.js",
+    ]
+    for asset in expected_assets:
+        assert asset in includes, (
+            f"Missing asset packaging inclusion in pyproject.toml: {asset}"
+        )
