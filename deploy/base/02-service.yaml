@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: app-service
   labels:
-    app.kubernetes.io/name: mainframe-app-template
+    app.kubernetes.io/name: synthai-studio
     app.kubernetes.io/component: api
 spec:
   ports:
@@ -11,5 +11,5 @@ spec:
       port: 80
       targetPort: http
   selector:
-    app.kubernetes.io/name: mainframe-app-template
+    app.kubernetes.io/name: synthai-studio
     app.kubernetes.io/component: api

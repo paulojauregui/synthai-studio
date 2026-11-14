@@ -28,3 +28,8 @@ ENV/
 .coverage
 htmlcov/
 .DS_Store
+AUTONOMOUS_PROMPT.md
+data/*.duckdb
+data/*.duckdb.wal
+data/exports/
+.mypy_cache/
