@@ -285,8 +285,22 @@ function renderJobsAndLedger(jobs, selectedJobId = null, onAuditClick = null) {
 
   tbody.innerHTML = '';
   if (!jobs || jobs.length === 0) {
-    tbody.innerHTML =
-      '<tr><td colspan="7" class="state-empty">No synthetic generation jobs executed yet.</td></tr>';
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="state-empty">
+          <div>No synthetic generation jobs executed yet.</div>
+          <button type="button" class="btn btn-secondary empty-jobs-cta" style="margin-top: 8px;">
+            Configure &amp; Launch Job in Step 3
+          </button>
+        </td>
+      </tr>
+    `;
+    const emptyJobsBtn = tbody.querySelector('.empty-jobs-cta');
+    if (emptyJobsBtn) {
+      emptyJobsBtn.addEventListener('click', () => {
+        if (window.switchStep) window.switchStep(3, true);
+      });
+    }
   } else {
     jobs.forEach((j) => {
       const isFallback = j.compute_tier === 'CPU_WORKER' && j.config && j.config.engine === 'SPARK_LLM_EDGE';

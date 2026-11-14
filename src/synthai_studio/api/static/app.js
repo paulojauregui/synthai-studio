@@ -203,19 +203,24 @@ async function loadInitData() {
 
   await loadBenchmarks();
   await loadDatasets();
+  await loadProfileForSelected();
   await loadJobs();
+  await loadReportForSelected();
   updateDpDefaults();
 }
 
 // Step 1: Benchmarks Discovery & Seeding
 async function loadBenchmarks() {
+  const container = document.getElementById('benchmark-cards');
+  if (container && window.SynthAIViews && typeof window.SynthAIViews.renderLoadingSkeleton === 'function') {
+    window.SynthAIViews.renderLoadingSkeleton(container, 'card', 3);
+  }
   try {
     const resp = await fetch('/api/v1/benchmarks');
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();
     StudioState.benchmarks = data;
 
-    const container = document.getElementById('benchmark-cards');
     if (!container) return;
 
     if (window.SynthAIViews && typeof window.SynthAIViews.renderBenchmarkCards === 'function') {
@@ -249,6 +254,15 @@ async function loadBenchmarks() {
       });
     }
   } catch (err) {
+    if (container && window.SynthAIViews && typeof window.SynthAIViews.renderErrorState === 'function') {
+      window.SynthAIViews.renderErrorState(
+        container,
+        'Benchmark Discovery Failed',
+        err.message,
+        'Retry Benchmark Discovery',
+        loadBenchmarks
+      );
+    }
     showGlobalError('Benchmark Discovery Failed', err.message, loadBenchmarks);
   }
 }
@@ -609,13 +623,21 @@ async function handleGenerate(evt) {
     StudioState.currentJobId = res.job.job_id;
     StudioState.currentReport = res.report;
 
-    announcePolite(
-      `Generation job ${res.job.job_id} completed on ${res.job.compute_tier}. Overall quality score: ${(res.report.overall_quality_score * 100).toFixed(1)}%.`
-    );
+    if (res.job.config && res.job.config.engine === 'SPARK_LLM_EDGE' && res.job.compute_tier === 'CPU_WORKER') {
+      announceAssertive(
+        `Notice: DGX Spark edge endpoint unavailable under 2.0 second circuit breaker. Job ${res.job.job_id} executed on local CPU worker fallback.`
+      );
+    } else {
+      announcePolite(
+        `Generation job ${res.job.job_id} completed on ${res.job.compute_tier}. Overall quality score: ${(res.report.overall_quality_score * 100).toFixed(1)}%.`
+      );
+    }
     logConsole(`Generation completed: Job ${res.job.job_id} (${res.job.rows_generated} rows).`);
 
     await loadJobs();
-    viewJobReport(res.job.job_id);
+    const repSelect = document.getElementById('report-job-select');
+    if (repSelect) repSelect.value = res.job.job_id;
+    await loadReportForSelected();
     switchStep(4, true);
   } catch (err) {
     showGlobalError('Synthesis Execution Failed', err.message);
@@ -910,6 +932,20 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnDlParquet) btnDlParquet.addEventListener('click', () => downloadArtifact('parquet'));
   const btnDlMd = document.getElementById('btn-dl-markdown');
   if (btnDlMd) btnDlMd.addEventListener('click', () => downloadArtifact('markdown'));
+
+  // Empty-state 1-click recovery CTAs
+  const btnEmptySeed = document.getElementById('btn-empty-seed-hipaa');
+  if (btnEmptySeed) {
+    btnEmptySeed.addEventListener('click', () => seedBenchmark('healthcare_hipaa_readmissions'));
+  }
+  const btnEmptyStep1 = document.getElementById('btn-empty-goto-step1');
+  if (btnEmptyStep1) {
+    btnEmptyStep1.addEventListener('click', () => switchStep(1, true));
+  }
+  const btnEmptyStep3 = document.getElementById('btn-empty-goto-step3');
+  if (btnEmptyStep3) {
+    btnEmptyStep3.addEventListener('click', () => switchStep(3, true));
+  }
 
   loadInitData();
 });
