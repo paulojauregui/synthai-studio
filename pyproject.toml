@@ -5,6 +5,11 @@ description = "SynthAI Studio: Privacy-Preserving Synthetic Data Generation, Dif
 authors = ["Paulo Jauregui <paulo@paulojauregui.com>"]
 readme = "README.md"
 packages = [{include = "synthai_studio", from = "src"}]
+include = [
+    "src/synthai_studio/api/templates/*.html",
+    "src/synthai_studio/api/static/*.css",
+    "src/synthai_studio/api/static/*.js",
+]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.16"
@@ -30,14 +35,14 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py313"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "B", "UP"]
 ignore = ["B008"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.13"
 strict = false
 warn_return_any = false
 warn_unused_configs = true

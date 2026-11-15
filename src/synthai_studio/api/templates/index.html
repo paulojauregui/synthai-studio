@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYNTHAI STUDIO // AUTONOMOUS PRIVACY &amp; FIDELITY ENGINE</title>
+  <link rel="stylesheet" href="/static/tokens.css">
+  <link rel="stylesheet" href="/static/components.css">
+  <script src="/static/views.js" defer></script>
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a href="#main-workbench" class="skip-link">Skip to main workbench</a>
+
+  <div id="aria-status-polite" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="aria-status-assertive" class="sr-only" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+  <header role="banner">
+    <div>
+      <div class="brand-title">SYNTHAI STUDIO // AUTONOMOUS PRIVACY &amp; FIDELITY ENGINE</div>
+      <div class="brand-subtitle">
+        DIFFERENTIAL PRIVACY (EPSILON, DELTA) // GENERATIVE MODELS // HIPAA &amp; GDPR COMPLIANCE
+      </div>
+    </div>
+    <div class="cluster-status">
+      <span class="badge badge-success" id="status-service">SERVICE: ONLINE</span>
+      <span class="badge badge-info" id="status-catalog">CATALOG: DUCKDB</span>
+      <span class="badge badge-info" id="status-temporal">TEMPORAL: ACTIVE</span>
+    </div>
+  </header>
+
+  <nav aria-label="SynthAI Studio Workflow Steps">
+    <div role="tablist" aria-label="5-Step Synthesis Pipeline" id="workflow-tablist">
+      <button type="button" role="tab" class="nav-tab active" id="tab-step-1"
+        aria-selected="true" aria-controls="step-1" tabindex="0" data-step="1">
+        1. Connect &amp; Seed
+      </button>
+      <button type="button" role="tab" class="nav-tab" id="tab-step-2"
+        aria-selected="false" aria-controls="step-2" tabindex="-1" data-step="2">
+        2. Quality &amp; PII Audit
+      </button>
+      <button type="button" role="tab" class="nav-tab" id="tab-step-3"
+        aria-selected="false" aria-controls="step-3" tabindex="-1" data-step="3">
+        3. Engine &amp; DP Config
+      </button>
+      <button type="button" role="tab" class="nav-tab" id="tab-step-4"
+        aria-selected="false" aria-controls="step-4" tabindex="-1" data-step="4">
+        4. Worker Monitor
+      </button>
+      <button type="button" role="tab" class="nav-tab" id="tab-step-5"
+        aria-selected="false" aria-controls="step-5" tabindex="-1" data-step="5">
+        5. Fidelity &amp; Export
+      </button>
+    </div>
+  </nav>
+
+  <main id="main-workbench" tabindex="-1">
+    <div id="global-error-banner" class="error-banner state-error" role="alert" tabindex="-1" hidden>
+      <div id="global-error-text"></div>
+      <button type="button" id="global-error-dismiss" class="btn btn-secondary">Dismiss Error</button>
+    </div>
+
+    <!-- Step 1: Connect & Seed -->
+    <section id="step-1" class="step-panel active" role="tabpanel" aria-labelledby="tab-step-1">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Pre-Engineered Domain Benchmarks</h2>
+            <span class="badge badge-info">3 REFERENCE DATASETS</span>
+          </div>
+          <div id="benchmark-cards" aria-live="polite"></div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Upload Custom Ingest Dataset</h2>
+              <span class="badge badge-info">CSV OR JSON</span>
+            </div>
+            <form id="upload-form">
+              <label for="upload-name">Dataset Name</label>
+              <input type="text" id="upload-name" name="name" required autocomplete="off"
+                placeholder="my_enterprise_dataset">
+
+              <label for="upload-file">Upload CSV or JSON File</label>
+              <input type="file" id="upload-file" name="file" accept=".csv,.json" required>
+
+              <button type="submit" id="btn-upload-dataset" class="btn">Upload &amp; Profile Dataset</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Presigned Direct Upload Ticket</h2>
+              <span class="badge badge-info">OBJECT STORAGE CAPABILITY</span>
+            </div>
+            <label for="presign-name">Target Dataset Name for Capability Ticket</label>
+            <input type="text" id="presign-name" placeholder="seaweedfs_target_dataset" autocomplete="off">
+
+            <button type="button" id="btn-generate-ticket" class="btn btn-secondary">Generate Ticket</button>
+
+            <div id="presign-result" hidden>
+              <pre id="presign-text" class="tabular-nums"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: Quality & PII Audit -->
+    <section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="tab-step-2" hidden>
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Automated Data Quality &amp; PII/PHI Audit Scanner</h2>
+          <div>
+            <label for="profile-dataset-select">Inspected Dataset</label>
+            <select id="profile-dataset-select"></select>
+            <button type="button" id="btn-cleanse-dataset" class="btn btn-emerald">[1-Click Cleanse &amp; Anonymize]</button>
+          </div>
+        </div>
+
+        <div id="profile-empty-state" class="state-empty" hidden>
+          <p>No dataset selected or available for profiling.</p>
+          <div style="margin-top: 12px; display: flex; gap: 8px; justify-content: center;">
+            <button type="button" id="btn-empty-seed-hipaa" class="btn btn-emerald">Seed Healthcare HIPAA Benchmark</button>
+            <button type="button" id="btn-empty-goto-step1" class="btn btn-secondary">Go to Step 1: Connect &amp; Seed</button>
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="stat-tile">
+            <div class="stat-label">Total Rows</div>
+            <div class="stat-val tabular-nums" id="prof-rows">-</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Total Columns</div>
+            <div class="stat-val tabular-nums" id="prof-cols">-</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Quality Score</div>
+            <div class="stat-val tabular-nums" id="prof-quality">-</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Privacy Risk Score</div>
+            <div class="stat-val tabular-nums" id="prof-privacy-risk">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Column Profiles &amp; PII Finding Catalog</h3>
+        </div>
+        <div class="table-scroll-wrapper">
+          <table id="profile-columns-table">
+            <thead>
+              <tr>
+                <th scope="col">Column Name</th>
+                <th scope="col">Inferred Type</th>
+                <th scope="col">PII Finding</th>
+                <th scope="col">Confidence &amp; Remediation</th>
+                <th scope="col">Null Count</th>
+                <th scope="col">Outliers (|z|&gt;3)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Data Quality &amp; Integrity Issues</h3>
+          </div>
+          <div id="profile-issues-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Empirical Pearson Correlation Matrix</h3>
+          </div>
+          <div class="table-scroll-wrapper" id="profile-corr-wrapper">
+            <table id="profile-corr-table">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 3: Engine & DP Config -->
+    <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-step-3" hidden>
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Multi-Engine Generative Synthesis &amp; DP Configuration</h2>
+          <span class="badge badge-info">DIFFERENTIAL PRIVACY SLIDERS</span>
+        </div>
+
+        <form id="synth-config-form">
+          <div class="grid-2">
+            <div>
+              <label for="gen-dataset-id">Target Dataset</label>
+              <select id="gen-dataset-id" required></select>
+
+              <label for="gen-target-rows">Target Row Count (10 - 200,000)</label>
+              <input type="number" id="gen-target-rows" class="tabular-nums" value="250"
+                min="10" max="200000" step="10" required>
+
+              <label for="gen-engine">Synthesizer Engine</label>
+              <select id="gen-engine">
+                <option value="GAUSSIAN_COPULA">GAUSSIAN_COPULA (Analytic Multivariate Normal &amp; Empirical Marginals)</option>
+                <option value="CTGAN_LATENT">CTGAN_LATENT (Conditional Generator &amp; Discriminator Latent Space)</option>
+                <option value="FAKER_HYBRID">FAKER_HYBRID (Domain Semantics &amp; High-Entropy Hybrid Synthetics)</option>
+                <option value="SPARK_LLM_EDGE">SPARK_LLM_EDGE (NVIDIA GB10 vLLM via Split-Timeout Circuit Breaker)</option>
+              </select>
+
+              <label for="gen-privacy-level">Differential Privacy Tier</label>
+              <select id="gen-privacy-level">
+                <option value="MEDIUM" selected>MEDIUM (Epsilon = 1.0, Delta = 1e-5: Optimal Balance)</option>
+                <option value="LOW">LOW (Epsilon = 10.0, Delta = 1e-5: High Statistical Utility)</option>
+                <option value="HIGH">HIGH (Epsilon = 0.1, Delta = 1e-6: Maximum Mathematical Guarantee)</option>
+                <option value="NONE">NONE (Unperturbed Empirical: Differential Privacy Disabled)</option>
+              </select>
+
+              <label for="gen-epsilon">Epsilon (&epsilon;) Privacy Budget</label>
+              <input type="number" id="gen-epsilon" class="tabular-nums" value="1.0"
+                min="0.01" max="100.0" step="0.05">
+
+              <label for="gen-delta">Delta (&delta;) Failure Probability</label>
+              <input type="number" id="gen-delta" class="tabular-nums" value="0.00001"
+                min="0.0000001" max="0.1" step="0.000001">
+            </div>
+
+            <div>
+              <label for="gen-target-col">Minority Upsampling Target Column (Optional)</label>
+              <input type="text" id="gen-target-col" placeholder="readmitted_30d / is_fraud / churned">
+
+              <label for="gen-minority-val">Minority Class Value (Optional)</label>
+              <input type="text" id="gen-minority-val" placeholder="1 / true / yes">
+
+              <label for="gen-minority-ratio">Target Minority Ratio (0.05 - 0.95)</label>
+              <input type="number" id="gen-minority-ratio" class="tabular-nums" value="0.30"
+                min="0.05" max="0.95" step="0.05">
+
+              <div class="form-inline-check">
+                <input type="checkbox" id="gen-anonymize-pii" checked>
+                <label for="gen-anonymize-pii">Anonymize PII identifiers with synthetic format-preserving tokens</label>
+              </div>
+
+              <div id="dp-guarantee-preview" class="state-nominal" role="status"></div>
+
+              <button type="submit" id="btn-launch-synth" class="btn btn-emerald">Launch Generative Synthesis</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Step 4: Worker Monitor -->
+    <section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="tab-step-4" hidden>
+      <div id="compute-fallback-banner" class="degraded-banner state-degraded" role="status" hidden>
+        <span>Notice: DGX Spark edge endpoint unavailable under 2.0s circuit breaker. Fallen back to CPU Copula execution.</span>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Generation Jobs Ledger</h2>
+            <button type="button" id="btn-refresh-jobs" class="btn btn-secondary">Refresh Jobs</button>
+          </div>
+          <div class="table-scroll-wrapper">
+            <table id="jobs-table">
+              <thead>
+                <tr>
+                  <th scope="col">Job ID</th>
+                  <th scope="col">Dataset</th>
+                  <th scope="col">Engine</th>
+                  <th scope="col">Compute Tier</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Rows &amp; Throughput</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" id="privacy-ledger-card">
+            <div class="card-header">
+              <h2 class="card-title">Differential Privacy Budget Ledger</h2>
+              <span class="badge" id="ledger-status">LEDGER IDLE</span>
+            </div>
+            <div class="grid-3">
+              <div class="stat-tile">
+                <div class="stat-label">Epsilon Spent</div>
+                <div class="stat-val tabular-nums" id="ledger-spent">-</div>
+              </div>
+              <div class="stat-tile">
+                <div class="stat-label">Noise Scale</div>
+                <div class="stat-val tabular-nums" id="ledger-noise-scale">-</div>
+              </div>
+              <div class="stat-tile">
+                <div class="stat-label">Remaining Budget</div>
+                <div class="stat-val tabular-nums" id="ledger-remaining">-</div>
+              </div>
+            </div>
+            <div>
+              <p>Delta (&delta;): <span class="tabular-nums" id="ledger-delta">-</span></p>
+              <p>Initial Budget: <span class="tabular-nums" id="ledger-initial">-</span></p>
+              <p>Noise Mechanism: <span id="ledger-mechanism">-</span></p>
+              <p>PSD Projection: <span id="ledger-psd">-</span></p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Real-Time Worker Console Logs</h2>
+            </div>
+            <div id="worker-console" class="log-console tabular-nums" role="log" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 5: Fidelity & Export -->
+    <section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="tab-step-5" hidden>
+      <div id="compute-fallback-banner-step5" class="degraded-banner state-degraded" role="status" hidden>
+        <span>Notice: Audited job executed on CPU worker fallback due to DGX Spark edge timeout.</span>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Statistical Fidelity &amp; Privacy Verification Proof</h2>
+          <div>
+            <label for="report-job-select">Audited Generation Job</label>
+            <select id="report-job-select"></select>
+          </div>
+        </div>
+
+        <div id="report-empty-state" class="state-empty" hidden>
+          <p>No job selected or available for auditing.</p>
+          <div style="margin-top: 12px; display: flex; gap: 8px; justify-content: center;">
+            <button type="button" id="btn-empty-goto-step3" class="btn btn-emerald">Go to Step 3: Launch Synthesis Job</button>
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="stat-tile">
+            <div class="stat-label">Overall Quality</div>
+            <div class="stat-val tabular-nums" id="rep-quality">-</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Marginal Fidelity</div>
+            <div class="stat-val tabular-nums" id="rep-fidelity">-</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Correlation Stability</div>
+            <div class="stat-val tabular-nums" id="rep-corr">-</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Privacy Protection</div>
+            <div class="stat-val tabular-nums" id="rep-privacy">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Executive Compliance Verdict</h3>
+            <span class="badge" id="rep-hipaa">AUDITING</span>
+          </div>
+          <div id="rep-verdict"></div>
+          <div>
+            <p>DCR (Median / p05): <span class="tabular-nums" id="rep-dcr">-</span></p>
+            <p>NNDR (Median / p05): <span class="tabular-nums" id="rep-nndr">-</span></p>
+            <p>Exact Row Collisions: <span class="tabular-nums" id="rep-collisions">-</span></p>
+            <p>PII Leakage Status: <span class="tabular-nums" id="rep-pii-leaks">-</span></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">1-Click Artifact Exports</h3>
+          </div>
+          <div>
+            <button type="button" id="btn-dl-csv" class="btn btn-secondary">Download CSV</button>
+            <button type="button" id="btn-dl-json" class="btn btn-secondary">Download JSON</button>
+            <button type="button" id="btn-dl-parquet" class="btn btn-secondary">Download Parquet</button>
+            <button type="button" id="btn-dl-markdown" class="btn btn-secondary">Download Markdown Audit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Column-by-Column Distribution Fidelity Metrics</h3>
+        </div>
+        <div class="table-scroll-wrapper">
+          <table id="fidelity-columns-table">
+            <thead>
+              <tr>
+                <th scope="col">Column Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Metric</th>
+                <th scope="col">Fidelity Score</th>
+                <th scope="col">Stat Distance</th>
+                <th scope="col">JS Similarity</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
